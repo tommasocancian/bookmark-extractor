@@ -3,10 +3,19 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from pathlib import Path
 
-# Nascondi finestra Tk
+print(r"""
+ ____              _                          _            
+| __ )  ___   ___ | | ___ __ ___   __ _ _ __ | |_ ___ _ __ 
+|  _ \ / _ \ / _ \| |/ / '_ ` _ \ / _` | '_ \| __/ _ \ '__|
+| |_) | (_) | (_) |   <| | | | | | (_| | | | | ||  __/ |   
+|____/ \___/ \___/|_|\_\_| |_| |_|\__,_|_| |_|\__\___|_|   
+
+Bookmark Extractor v1.0
+by Tommaso Cancian
+""")
+
 Tk().withdraw()
 
-# Scegli manualmente il file esportato da Chrome
 file_path = askopenfilename(
     title="Seleziona il file bookmark HTML esportato da Chrome",
     filetypes=[("HTML files", "*.html")]
@@ -25,6 +34,8 @@ documents_path = Path.home() / "Documents"
 with open(file_path, "r", encoding="utf-8") as f:
     soup = BeautifulSoup(f, "html.parser")
 
+found = False
+
 for h3 in soup.find_all("h3"):
     if h3.text.strip() == folder_name:
 
@@ -34,14 +45,18 @@ for h3 in soup.find_all("h3"):
 
         with open(output_file, "w", encoding="utf-8") as out:
             out.write(f"""
-            <html>
-            <head><meta charset="utf-8"></head>
-            <body>
-            <h3>{folder_name}</h3>
-            {str(dl)}
-            </body>
-            </html>
-            """)
+<html>
+<head><meta charset="utf-8"></head>
+<body>
+<h3>{folder_name}</h3>
+{str(dl)}
+</body>
+</html>
+""")
 
-        print("✅ Esportato in Documents!")
+        print(f"✅ Esportato in: {output_file}")
+        found = True
         break
+
+if not found:
+    print("❌ Cartella bookmark non trovata.")
